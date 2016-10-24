@@ -41,8 +41,14 @@ class MethodScopeSniff extends PHP_CodeSniffer_Standards_AbstractScopeSniff
 		} else {
 			if ($modifier !== FALSE) {
 				$error = 'Scope modifier specified for interface function "%s"';
-				$data = array($methodName);
-				$phpcsFile->addError($error, $stackPtr, 'Missing', $data);
+				$modifierName = $tokens[$modifier]['content'];
+				$data = array($modifierName, $methodName);
+				$fix = $phpcsFile->addFixableError($error, $stackPtr, 'Missing', $data);
+
+				if ($fix === true) {
+					$phpcsFile->fixer->replaceToken($modifier, '');
+					$phpcsFile->fixer->replaceToken($modifier + 1, '');
+				}
 			}
 		}
 	}
