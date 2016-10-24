@@ -264,7 +264,11 @@ class ClassDeclarationSniff extends PEAR_Sniffs_Classes_ClassDeclarationSniff
         if ($tokens[$prevContent]['line'] !== ($tokens[$closeBrace]['line'] - $this->numBlankLinesBeforeClosingBrace - 1)) {
             $error = 'The closing brace for the %s must go on the next line after the body';
             $data  = array($tokens[$stackPtr]['content']);
-            $phpcsFile->addError($error, $closeBrace, 'CloseBraceAfterBody', $data);
+            $fix = $phpcsFile->addFixableError($error, $closeBrace, 'CloseBraceAfterBody', $data);
+
+            if ($fix === TRUE) {
+                $phpcsFile->fixer->replaceToken($closeBrace - 1, '');
+            }
         }
 
         // Check the closing brace is on it's own line, but allow
