@@ -16,7 +16,7 @@
         <exclude name="Squiz.Functions.MultiLineFunctionDeclaration"/><!-- No no no please -->
     </rule>
 
-    <rule ref="Nette.Classes.ClassDeclaration">
+    <rule ref="NetteStandard.Classes.ClassDeclaration">
         <properties>
             <property name="numBlankLinesBeforeClosingBrace">1</property><!-- They don't have 1 blank line-->
         </properties>
