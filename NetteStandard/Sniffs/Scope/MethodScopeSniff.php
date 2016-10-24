@@ -22,6 +22,7 @@ class MethodScopeSniff extends PHP_CodeSniffer_Standards_AbstractScopeSniff
 		$tokens = $phpcsFile->getTokens();
 
 		$isClass = $tokens[$currScope]['code'] === T_CLASS;
+		$isInterface = $tokens[$currScope]['code'] === T_INTERFACE;
 
 		$methodName = $phpcsFile->getDeclarationName($stackPtr);
 		if ($methodName === NULL) {
@@ -38,16 +39,14 @@ class MethodScopeSniff extends PHP_CodeSniffer_Standards_AbstractScopeSniff
 				$phpcsFile->addError($error, $stackPtr, 'Missing', $data);
 			}
 
-		} else {
-			if ($modifier !== FALSE) {
-				$error = 'Scope modifier specified for interface function "%s"';
-				$modifierName = $tokens[$modifier]['content'];
-				$data = array($modifierName, $methodName);
+		} elseif ($isInterface) {
+			if ($modifier === FALSE) {
+				$error = 'No scope modifier "public" specified for interface function "%s"';
+				$data = array($methodName);
 				$fix = $phpcsFile->addFixableError($error, $stackPtr, 'Missing', $data);
 
 				if ($fix === true) {
-					$phpcsFile->fixer->replaceToken($modifier, '');
-					$phpcsFile->fixer->replaceToken($modifier + 1, '');
+					$phpcsFile->fixer->replaceToken($stackPtr, 'public ' . $tokens[$stackPtr]['content']);
 				}
 			}
 		}
