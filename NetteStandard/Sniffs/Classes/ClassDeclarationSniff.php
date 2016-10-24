@@ -4,6 +4,7 @@ namespace NetteStandard\Sniffs\Classes;
 
 use PHP_CodeSniffer_Sniff;
 use PHP_CodeSniffer_File;
+use PHP_CodeSniffer_Tokens;
 use PEAR_Sniffs_Classes_ClassDeclarationSniff;
 
 /**
