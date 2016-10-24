@@ -34,14 +34,18 @@ class MethodScopeSniff extends PHP_CodeSniffer_Standards_AbstractScopeSniff
 
 		if ($isClass) {
 			if (($modifier === FALSE) || ($tokens[$modifier]['line'] !== $tokens[$stackPtr]['line'])) {
-				$error = 'No scope modifier specified for function "%s"';
+				$error = 'No scope modifier specified for function "%s". Public will be added in repair.';
 				$data = array($methodName);
-				$phpcsFile->addError($error, $stackPtr, 'Missing', $data);
+				$fix = $phpcsFile->addFixableError($error, $stackPtr, 'Missing', $data);
+
+				if ($fix === true) {
+					$phpcsFile->fixer->replaceToken($stackPtr, 'public ' . $tokens[$stackPtr]['content']);
+				}
 			}
 
 		} elseif ($isInterface) {
 			if ($modifier === FALSE) {
-				$error = 'No scope modifier "public" specified for interface function "%s"';
+				$error = 'No scope modifier specified for interface function "%s". Public will be added in repair.';
 				$data = array($methodName);
 				$fix = $phpcsFile->addFixableError($error, $stackPtr, 'Missing', $data);
 
