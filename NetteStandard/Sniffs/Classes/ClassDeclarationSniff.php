@@ -135,6 +135,25 @@ class ClassDeclarationSniff extends PEAR_Sniffs_Classes_ClassDeclarationSniff
             }
         }//end foreach
 
+        // Check if extends/implements classes are at same line
+        $classNames = array();
+        $find       = array(T_STRING, T_EXTENDS, T_IMPLEMENTS);
+        $nextClass  = $phpcsFile->findNext($find, ($className + 2), ($openingBrace - 1));
+        while ($nextClass !== false) {
+            $classNames[] = $nextClass;
+            $nextClass    = $phpcsFile->findNext($find, ($nextClass + 1), ($openingBrace - 1));
+        }
+        $classCount = count($classNames);
+        if ($classCount > 0) {
+            if ($tokens[$className]['line'] !== $tokens[$classNames[$classCount - 1]]['line']) {
+                $error = 'Extend and implement classes for "%s" class MUST be on same line.';
+                $data = array(
+                    $tokens[$className]['content'],
+                );
+                $phpcsFile->addError($error, $className, 'ExtendsInterfaceClassesOnSameLine', $data);
+            }
+        }
+
         // Check each of the extends/implements class names. If the implements
         // keywords is the last content on the line, it means we need to check for
         // the multi-line implements format, so we do not include the class names
