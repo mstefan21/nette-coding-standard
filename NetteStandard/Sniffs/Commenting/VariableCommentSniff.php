@@ -100,9 +100,12 @@ class VariableCommentSniff extends Squiz_Sniffs_Commenting_VariableCommentSniff
 			return;
 		}
 
-		$varType = $tokens[($foundVar + 2)]['content'];
+		$varType = trim($tokens[($foundVar + 2)]['content']);
 		$suggestedType = PHP_CodeSniffer::suggestType($varType);
-		if ($varType !== $suggestedType) {
+		if (strtolower($varType) === 'type') {
+			$error = 'Found not allowed type hint "type" in member variable comment';
+			$phpcsFile->addError($error, ($foundVar + 2), 'IncorrectVarType');
+		} elseif ($varType !== $suggestedType) {
 			$error = 'Expected "%s" but found "%s" for @var tag in member variable comment';
 			$data = array(
 				$suggestedType,
