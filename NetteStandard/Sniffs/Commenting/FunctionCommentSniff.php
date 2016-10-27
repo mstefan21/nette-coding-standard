@@ -69,6 +69,12 @@ class FunctionCommentSniff extends Squiz_Sniffs_Commenting_FunctionCommentSniff
 			if (empty($content) === true || $tokens[($return + 2)]['code'] !== T_DOC_COMMENT_STRING) {
 				$error = 'Return type missing for @return tag in function comment';
 				$phpcsFile->addError($error, $return, 'MissingReturnType');
+			} elseif (strtolower($content) === 'type') {
+				$error = 'Found not allowed type hint "%s" for function return';
+				$data = array(
+					$content,
+				);
+				$phpcsFile->addError($error, $return, 'IncorrectVarType', $data);
 			} else {
 				// Check return type (can be multiple, separated by '|').
 				$typeNames = explode('|', $content);
