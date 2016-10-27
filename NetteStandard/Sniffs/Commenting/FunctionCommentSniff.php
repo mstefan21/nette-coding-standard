@@ -562,7 +562,7 @@ class FunctionCommentSniff extends Squiz_Sniffs_Commenting_FunctionCommentSniff
 		// Report missing comments.
 		$diff = array_diff($realNames, $foundParams);
 		foreach ($diff as $neededParam) {
-			$error = 'Doc comment for parameter "%s" missing';
+			$error = 'Missing @param tag in function comment for "%s" parameter';
 			$data = array($neededParam);
 			$phpcsFile->addError($error, $commentStart, 'MissingParamTag', $data);
 		}
