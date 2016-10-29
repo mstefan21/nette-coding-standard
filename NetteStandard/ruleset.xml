@@ -15,6 +15,18 @@
 		<exclude name="Squiz.Functions.MultiLineFunctionDeclaration"/>
 	</rule>
 
+	<rule ref="NetteStandard.Commenting">
+		<exclude name="NetteStandard.Commenting.FileComment.Missing"/>
+		<exclude name="NetteStandard.Commenting.ClassComment.Missing"/>
+		<exclude name="NetteStandard.Commenting.FunctionComment.MissingParamComment"/>
+		<exclude name="NetteStandard.Commenting.ClosingDeclarationComment.Missing"/>
+		<exclude name="NetteStandard.Commenting.FunctionComment.SpacingAfterParamType"/>
+		<exclude name="NetteStandard.Commenting.FunctionComment.SpacingAfterParamName"/>
+		<exclude name="NetteStandard.Commenting.FunctionComment.EmptyThrows"/>
+		<exclude name="NetteStandard.Commenting.FunctionComment.ParamCommentFullStop"/>
+		<exclude name="NetteStandard.Commenting.LongConditionClosingComment.Missing"/>
+	</rule>
+
 	<rule ref="NetteStandard.Classes.ClassDeclaration">
 		<properties>
 			<property name="numBlankLinesBeforeClosingBrace">1</property>
