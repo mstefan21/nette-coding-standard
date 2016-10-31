@@ -3,8 +3,8 @@
 namespace NetteStandard\Sniffs\Commenting;
 
 use PHP_CodeSniffer_File;
+use PHP_CodeSniffer_Sniff;
 use PHP_CodeSniffer_Tokens;
-use Squiz_Sniffs_Commenting_InlineCommentSniff;
 
 /**
  * Squiz_Sniffs_Commenting_InlineCommentSniff.
@@ -19,7 +19,7 @@ use Squiz_Sniffs_Commenting_InlineCommentSniff;
  * @license   https://github.com/squizlabs/PHP_CodeSniffer/blob/master/licence.txt BSD Licence
  * @link      http://pear.php.net/package/PHP_CodeSniffer
  */
-class InlineCommentSniff extends Squiz_Sniffs_Commenting_InlineCommentSniff
+class InlineCommentSniff implements PHP_CodeSniffer_Sniff
 {
 
 	/**
@@ -121,11 +121,7 @@ class InlineCommentSniff extends Squiz_Sniffs_Commenting_InlineCommentSniff
 
 		if ($tokens[$stackPtr]['content']{0} === '#') {
 			$error = 'Perl-style comments are not allowed; use "// Comment" instead';
-			$fix = $phpcsFile->addFixableError($error, $stackPtr, 'WrongStyle');
-			if ($fix === true) {
-				$comment = ltrim($tokens[$stackPtr]['content'], "# \t");
-				$phpcsFile->fixer->replaceToken($stackPtr, "// $comment");
-			}
+			$fix = $phpcsFile->addError($error, $stackPtr, 'WrongStyle');
 		}
 
 		// We don't want end of block comments. If the last comment is a closing
@@ -178,14 +174,14 @@ class InlineCommentSniff extends Squiz_Sniffs_Commenting_InlineCommentSniff
 					ltrim(substr($comment, 2)),
 					$comment,
 				);
-				$fix = $phpcsFile->addFixableError($error, $stackPtr, 'TabBefore', $data);
+				$phpcsFile->addError($error, $stackPtr, 'TabBefore', $data);
 			} else if ($spaceCount === 0) {
 				$error = 'No space found before comment text; expected "// %s" but found "%s"';
 				$data = array(
 					substr($comment, 2),
 					$comment,
 				);
-				$fix = $phpcsFile->addFixableError($error, $stackPtr, 'NoSpaceBefore', $data);
+				$phpcsFile->addError($error, $stackPtr, 'NoSpaceBefore', $data);
 			} else if ($spaceCount > 1) {
 				$error = 'Expected 1 space before comment text but found %s; use block comment if you need indentation';
 				$data = array(
@@ -193,13 +189,8 @@ class InlineCommentSniff extends Squiz_Sniffs_Commenting_InlineCommentSniff
 					substr($comment, (2 + $spaceCount)),
 					$comment,
 				);
-				$fix = $phpcsFile->addFixableError($error, $stackPtr, 'SpacingBefore', $data);
+				$phpcsFile->addError($error, $stackPtr, 'SpacingBefore', $data);
 			}//end if
-
-			if ($fix === true) {
-				$newComment = '// ' . ltrim($tokens[$stackPtr]['content'], "/\t ");
-				$phpcsFile->fixer->replaceToken($stackPtr, $newComment);
-			}
 		}//end if
 		// The below section determines if a comment block is correctly capitalised,
 		// and ends in a full-stop. It will find the last comment in a block, and
@@ -231,10 +222,7 @@ class InlineCommentSniff extends Squiz_Sniffs_Commenting_InlineCommentSniff
 
 		if ($commentText === '') {
 			$error = 'Blank comments are not allowed';
-			$fix = $phpcsFile->addFixableError($error, $stackPtr, 'Empty');
-			if ($fix === true) {
-				$phpcsFile->fixer->replaceToken($stackPtr, '');
-			}
+			$fix = $phpcsFile->addError($error, $stackPtr, 'Empty');
 
 			return;
 		}
@@ -282,20 +270,7 @@ class InlineCommentSniff extends Squiz_Sniffs_Commenting_InlineCommentSniff
 			}
 
 			$error = 'There must be no blank line following an inline comment';
-			$fix = $phpcsFile->addFixableError($error, $stackPtr, 'SpacingAfter');
-			if ($fix === true) {
-				$next = $phpcsFile->findNext(T_WHITESPACE, ($stackPtr + 1), null, true);
-				$phpcsFile->fixer->beginChangeset();
-				for ($i = ($stackPtr + 1); $i < $next; $i++) {
-					if ($tokens[$i]['line'] === $tokens[$next]['line']) {
-						break;
-					}
-
-					$phpcsFile->fixer->replaceToken($i, '');
-				}
-
-				$phpcsFile->fixer->endChangeset();
-			}
+			$fix = $phpcsFile->addError($error, $stackPtr, 'SpacingAfter');
 		}//end if
 	}
 //end process()

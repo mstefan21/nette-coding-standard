@@ -3,7 +3,7 @@
 namespace NetteStandard\Sniffs\Commenting;
 
 use PHP_CodeSniffer_File;
-use Squiz_Sniffs_Commenting_EmptyCatchCommentSniff;
+use PHP_CodeSniffer_Sniff;
 
 /**
  * Squiz_Sniffs_Commenting_EmptyCatchCommentSniff.
@@ -18,7 +18,7 @@ use Squiz_Sniffs_Commenting_EmptyCatchCommentSniff;
  * @license   https://github.com/squizlabs/PHP_CodeSniffer/blob/master/licence.txt BSD Licence
  * @link      http://pear.php.net/package/PHP_CodeSniffer
  */
-class EmptyCatchCommentSniff extends Squiz_Sniffs_Commenting_EmptyCatchCommentSniff
+class EmptyCatchCommentSniff implements PHP_CodeSniffer_Sniff
 {
 
 	/**

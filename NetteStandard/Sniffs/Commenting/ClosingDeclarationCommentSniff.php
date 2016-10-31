@@ -3,7 +3,7 @@
 namespace NetteStandard\Sniffs\Commenting;
 
 use PHP_CodeSniffer_File;
-use Squiz_Sniffs_Commenting_ClosingDeclarationCommentSniff;
+use PHP_CodeSniffer_Sniff;
 
 /**
  * Squiz_Sniffs_Commenting_ClosingDeclarationCommentSniff.
@@ -18,7 +18,7 @@ use Squiz_Sniffs_Commenting_ClosingDeclarationCommentSniff;
  * @license   https://github.com/squizlabs/PHP_CodeSniffer/blob/master/licence.txt BSD Licence
  * @link      http://pear.php.net/package/PHP_CodeSniffer
  */
-class ClosingDeclarationCommentSniff extends Squiz_Sniffs_Commenting_ClosingDeclarationCommentSniff
+class ClosingDeclarationCommentSniff implements PHP_CodeSniffer_Sniff
 {
 
 	/**
@@ -101,33 +101,16 @@ class ClosingDeclarationCommentSniff extends Squiz_Sniffs_Commenting_ClosingDecl
 			$next = $phpcsFile->findNext(T_WHITESPACE, ($closingBracket + 1), null, true);
 			if (rtrim($tokens[$next]['content']) === $comment) {
 				// The comment isn't really missing; it is just in the wrong place.
-				$fix = $phpcsFile->addFixableError($error . ' directly after closing brace', $closingBracket, 'Misplaced');
-				if ($fix === true) {
-					$phpcsFile->fixer->beginChangeset();
-					for ($i = ($closingBracket + 1); $i < $next; $i++) {
-						$phpcsFile->fixer->replaceToken($i, '');
-					}
-
-					// Just in case, because indentation fixes can add indents onto
-					// these comments and cause us to be unable to fix them.
-					$phpcsFile->fixer->replaceToken($next, $comment . $phpcsFile->eolChar);
-					$phpcsFile->fixer->endChangeset();
-				}
+				$phpcsFile->addError($error . ' directly after closing brace', $closingBracket, 'Misplaced');
 			} else {
-				$fix = $phpcsFile->addFixableError($error, $closingBracket, 'Missing');
-				if ($fix === true) {
-					$phpcsFile->fixer->replaceToken($closingBracket, '}' . $comment . $phpcsFile->eolChar);
-				}
+				$phpcsFile->addError($error, $closingBracket, 'Missing');
 			}
 
 			return;
 		}//end if
 
 		if (rtrim($tokens[($closingBracket + 1)]['content']) !== $comment) {
-			$fix = $phpcsFile->addFixableError($error, $closingBracket, 'Incorrect');
-			if ($fix === true) {
-				$phpcsFile->fixer->replaceToken(($closingBracket + 1), $comment . $phpcsFile->eolChar);
-			}
+			$phpcsFile->addError($error, $closingBracket, 'Incorrect');
 
 			return;
 		}

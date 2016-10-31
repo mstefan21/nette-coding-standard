@@ -3,7 +3,7 @@
 namespace NetteStandard\Sniffs\Commenting;
 
 use PHP_CodeSniffer_File;
-use Squiz_Sniffs_Commenting_FileCommentSniff;
+use PHP_CodeSniffer_Sniff;
 
 /**
  * Parses and verifies the file doc comment.
@@ -18,7 +18,7 @@ use Squiz_Sniffs_Commenting_FileCommentSniff;
  * @license   https://github.com/squizlabs/PHP_CodeSniffer/blob/master/licence.txt BSD Licence
  * @link      http://pear.php.net/package/PHP_CodeSniffer
  */
-class FileCommentSniff extends Squiz_Sniffs_Commenting_FileCommentSniff
+class FileCommentSniff implements PHP_CodeSniffer_Sniff
 {
 
 	/**
@@ -151,26 +151,12 @@ class FileCommentSniff extends Squiz_Sniffs_Commenting_FileCommentSniff
 			if ($name === '@author') {
 				if ($tokens[$string]['content'] !== 'Squiz Pty Ltd <products@squiz.net>') {
 					$error = 'Expected "Squiz Pty Ltd <products@squiz.net>" for author tag';
-					$fix = $phpcsFile->addFixableError($error, $tag, 'IncorrectAuthor');
-					if ($fix === true) {
-						$expected = 'Squiz Pty Ltd <products@squiz.net>';
-						$phpcsFile->fixer->replaceToken($string, $expected);
-					}
+					$phpcsFile->addError($error, $tag, 'IncorrectAuthor');
 				}
 			} else if ($name === '@copyright') {
 				if (preg_match('/^([0-9]{4})(-[0-9]{4})? (Squiz Pty Ltd \(ABN 77 084 670 600\))$/', $tokens[$string]['content']) === 0) {
 					$error = 'Expected "xxxx-xxxx Squiz Pty Ltd (ABN 77 084 670 600)" for copyright declaration';
-					$fix = $phpcsFile->addFixableError($error, $tag, 'IncorrectCopyright');
-					if ($fix === true) {
-						$matches = array();
-						preg_match('/^(([0-9]{4})(-[0-9]{4})?)?.*$/', $tokens[$string]['content'], $matches);
-						if (isset($matches[1]) === false) {
-							$matches[1] = date('Y');
-						}
-
-						$expected = $matches[1] . ' Squiz Pty Ltd (ABN 77 084 670 600)';
-						$phpcsFile->fixer->replaceToken($string, $expected);
-					}
+					$phpcsFile->addError($error, $tag, 'IncorrectCopyright');
 				}
 			}//end if
 		}//end foreach

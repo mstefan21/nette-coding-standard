@@ -3,7 +3,7 @@
 namespace NetteStandard\Sniffs\Commenting;
 
 use PHP_CodeSniffer_File;
-use Squiz_Sniffs_Commenting_PostStatementCommentSniff;
+use PHP_CodeSniffer_Sniff;
 
 /**
  * Squiz_Sniffs_Commenting_PostStatementCommentSniff.
@@ -18,7 +18,7 @@ use Squiz_Sniffs_Commenting_PostStatementCommentSniff;
  * @license   https://github.com/squizlabs/PHP_CodeSniffer/blob/master/licence.txt BSD Licence
  * @link      http://pear.php.net/package/PHP_CodeSniffer
  */
-class PostStatementCommentSniff extends Squiz_Sniffs_Commenting_PostStatementCommentSniff
+class PostStatementCommentSniff implements PHP_CodeSniffer_Sniff
 {
 
 	/**
@@ -80,10 +80,7 @@ class PostStatementCommentSniff extends Squiz_Sniffs_Commenting_PostStatementCom
 		}
 
 		$error = 'Comments may not appear after statements';
-		$fix = $phpcsFile->addFixableError($error, $stackPtr, 'Found');
-		if ($fix === true) {
-			$phpcsFile->fixer->addNewlineBefore($stackPtr);
-		}
+		$fix = $phpcsFile->addError($error, $stackPtr, 'Found');
 	}
 //end process()
 }

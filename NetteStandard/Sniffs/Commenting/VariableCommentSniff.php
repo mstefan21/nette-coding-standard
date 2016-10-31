@@ -4,7 +4,7 @@ namespace NetteStandard\Sniffs\Commenting;
 
 use PHP_CodeSniffer;
 use PHP_CodeSniffer_File;
-use Squiz_Sniffs_Commenting_VariableCommentSniff;
+use PHP_CodeSniffer_Standards_AbstractVariableSniff;
 
 /**
  * Parses and verifies the variable doc comment.
@@ -19,7 +19,7 @@ use Squiz_Sniffs_Commenting_VariableCommentSniff;
  * @license   https://github.com/squizlabs/PHP_CodeSniffer/blob/master/licence.txt BSD Licence
  * @link      http://pear.php.net/package/PHP_CodeSniffer
  */
-class VariableCommentSniff extends Squiz_Sniffs_Commenting_VariableCommentSniff
+class VariableCommentSniff extends PHP_CodeSniffer_Standards_AbstractVariableSniff
 {
 
 	/**
@@ -112,10 +112,7 @@ class VariableCommentSniff extends Squiz_Sniffs_Commenting_VariableCommentSniff
 				$varType,
 			);
 
-			$fix = $phpcsFile->addFixableError($error, ($foundVar + 2), 'IncorrectVarType', $data);
-			if ($fix === true) {
-				$phpcsFile->fixer->replaceToken(($foundVar + 2), $suggestedType);
-			}
+			$fix = $phpcsFile->addError($error, ($foundVar + 2), 'IncorrectVarType', $data);
 		}
 	}
 //end processMemberVar()

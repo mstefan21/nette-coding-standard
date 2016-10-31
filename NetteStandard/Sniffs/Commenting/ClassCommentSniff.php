@@ -3,8 +3,8 @@
 namespace NetteStandard\Sniffs\Commenting;
 
 use PHP_CodeSniffer_File;
+use PHP_CodeSniffer_Sniff;
 use PHP_CodeSniffer_Tokens;
-use Squiz_Sniffs_Commenting_ClassCommentSniff;
 
 /**
  * Parses and verifies the class doc comment.
@@ -26,7 +26,7 @@ use Squiz_Sniffs_Commenting_ClassCommentSniff;
  * @version   Release: @package_version@
  * @link      http://pear.php.net/package/PHP_CodeSniffer
  */
-class ClassCommentSniff extends Squiz_Sniffs_Commenting_ClassCommentSniff
+class ClassCommentSniff implements PHP_CodeSniffer_Sniff
 {
 
 	/**

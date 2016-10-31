@@ -3,7 +3,7 @@
 namespace NetteStandard\Sniffs\Commenting;
 
 use PHP_CodeSniffer_File;
-use Squiz_Sniffs_Commenting_LongConditionClosingCommentSniff;
+use PHP_CodeSniffer_Sniff;
 
 /**
  * Squiz_Sniffs_ControlStructures_LongConditionClosingCommentSniff.
@@ -18,7 +18,7 @@ use Squiz_Sniffs_Commenting_LongConditionClosingCommentSniff;
  * @license   https://github.com/squizlabs/PHP_CodeSniffer/blob/master/licence.txt BSD Licence
  * @link      http://pear.php.net/package/PHP_CodeSniffer
  */
-class LongConditionClosingCommentSniff extends Squiz_Sniffs_Commenting_LongConditionClosingCommentSniff
+class LongConditionClosingCommentSniff implements PHP_CodeSniffer_Sniff
 {
 
 	/**
@@ -163,16 +163,7 @@ class LongConditionClosingCommentSniff extends Squiz_Sniffs_Commenting_LongCondi
 			if ($lineDifference >= $this->lineLimit) {
 				$error = 'End comment for long condition not found; expected "%s"';
 				$data = array($expected);
-				$fix = $phpcsFile->addFixableError($error, $stackPtr, 'Missing', $data);
-
-				if ($fix === true) {
-					$next = $phpcsFile->findNext(T_WHITESPACE, ($stackPtr + 1), null, true);
-					if ($next !== false && $tokens[$next]['line'] === $tokens[$stackPtr]['line']) {
-						$expected .= $phpcsFile->eolChar;
-					}
-
-					$phpcsFile->fixer->addContent($stackPtr, $expected);
-				}
+				$fix = $phpcsFile->addError($error, $stackPtr, 'Missing', $data);
 			}
 
 			return;
@@ -192,10 +183,7 @@ class LongConditionClosingCommentSniff extends Squiz_Sniffs_Commenting_LongCondi
 				$found,
 			);
 
-			$fix = $phpcsFile->addFixableError($error, $stackPtr, 'Invalid', $data);
-			if ($fix === true) {
-				$phpcsFile->fixer->replaceToken($comment, $expected . $phpcsFile->eolChar);
-			}
+			$fix = $phpcsFile->addError($error, $stackPtr, 'Invalid', $data);
 
 			return;
 		}

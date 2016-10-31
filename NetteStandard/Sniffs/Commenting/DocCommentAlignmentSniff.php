@@ -3,8 +3,8 @@
 namespace NetteStandard\Sniffs\Commenting;
 
 use PHP_CodeSniffer_File;
+use PHP_CodeSniffer_Sniff;
 use PHP_CodeSniffer_Tokens;
-use Squiz_Sniffs_Commenting_DocCommentAlignmentSniff;
 
 /**
  * Squiz_Sniffs_Commenting_EmptyCatchCommentSniff.
@@ -19,7 +19,7 @@ use Squiz_Sniffs_Commenting_DocCommentAlignmentSniff;
  * @license   https://github.com/squizlabs/PHP_CodeSniffer/blob/master/licence.txt BSD Licence
  * @link      http://pear.php.net/package/PHP_CodeSniffer
  */
-class DocCommentAlignmentSniff extends Squiz_Sniffs_Commenting_DocCommentAlignmentSniff
+class DocCommentAlignmentSniff implements PHP_CodeSniffer_Sniff
 {
 
 	/**
@@ -111,15 +111,7 @@ class DocCommentAlignmentSniff extends Squiz_Sniffs_Commenting_DocCommentAlignme
 					($requiredColumn - 1),
 					($tokens[$i]['column'] - 1),
 				);
-				$fix = $phpcsFile->addFixableError($error, $i, 'SpaceBeforeStar', $data);
-				if ($fix === true) {
-					$padding = str_repeat(' ', ($requiredColumn - 1));
-					if ($tokens[$i]['column'] === 1) {
-						$phpcsFile->fixer->addContentBefore($i, $padding);
-					} else {
-						$phpcsFile->fixer->replaceToken(($i - 1), $padding);
-					}
-				}
+				$phpcsFile->addError($error, $i, 'SpaceBeforeStar', $data);
 			}
 
 			if ($tokens[$i]['code'] !== T_DOC_COMMENT_STAR) {
@@ -133,18 +125,12 @@ class DocCommentAlignmentSniff extends Squiz_Sniffs_Commenting_DocCommentAlignme
 
 			if ($tokens[($i + 1)]['code'] !== T_DOC_COMMENT_WHITESPACE) {
 				$error = 'Expected 1 space after asterisk; 0 found';
-				$fix = $phpcsFile->addFixableError($error, $i, 'NoSpaceAfterStar');
-				if ($fix === true) {
-					$phpcsFile->fixer->addContent($i, ' ');
-				}
+				$phpcsFile->addError($error, $i, 'NoSpaceAfterStar');
 			} else if ($tokens[($i + 2)]['code'] === T_DOC_COMMENT_TAG && $tokens[($i + 1)]['content'] !== ' '
 			) {
 				$error = 'Expected 1 space after asterisk; %s found';
 				$data = array(strlen($tokens[($i + 1)]['content']));
-				$fix = $phpcsFile->addFixableError($error, $i, 'SpaceAfterStar', $data);
-				if ($fix === true) {
-					$phpcsFile->fixer->replaceToken(($i + 1), ' ');
-				}
+				$phpcsFile->addError($error, $i, 'SpaceAfterStar', $data);
 			}
 		}//end for
 	}

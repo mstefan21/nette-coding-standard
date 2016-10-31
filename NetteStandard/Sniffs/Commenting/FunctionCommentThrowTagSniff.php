@@ -3,8 +3,8 @@
 namespace NetteStandard\Sniffs\Commenting;
 
 use PHP_CodeSniffer_File;
+use PHP_CodeSniffer_Standards_AbstractScopeSniff;
 use PHP_CodeSniffer_Tokens;
-use Squiz_Sniffs_Commenting_FunctionCommentThrowTagSniff;
 
 /**
  * Verifies that a @throws tag exists for a function that throws exceptions.
@@ -21,7 +21,7 @@ use Squiz_Sniffs_Commenting_FunctionCommentThrowTagSniff;
  * @license   https://github.com/squizlabs/PHP_CodeSniffer/blob/master/licence.txt BSD Licence
  * @link      http://pear.php.net/package/PHP_CodeSniffer
  */
-class FunctionCommentThrowTagSniff extends Squiz_Sniffs_Commenting_FunctionCommentThrowTagSniff
+class FunctionCommentThrowTagSniff extends PHP_CodeSniffer_Standards_AbstractScopeSniff
 {
 
 	/**
