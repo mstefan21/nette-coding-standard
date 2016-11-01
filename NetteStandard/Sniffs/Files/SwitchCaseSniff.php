@@ -10,7 +10,7 @@ use PHP_CodeSniffer_Sniff;
  *
  * Checks all lines in the file, and throws warnings if they have whitespace(s) at end
  */
-class SwitchCaseSpaceSniff implements PHP_CodeSniffer_Sniff
+class SwitchCaseSniff implements PHP_CodeSniffer_Sniff
 {
 
 	/**
@@ -61,19 +61,30 @@ class SwitchCaseSpaceSniff implements PHP_CodeSniffer_Sniff
 		// The passed token is the first on the line.
 		$stackPtr--;
 
-		if ($tokens[$stackPtr]['column'] !== 1 && $tokens[$stackPtr]['content'] === $phpcsFile->eolChar
-		) {
+		if ($tokens[$stackPtr]['column'] !== 1 && $tokens[$stackPtr]['content'] === $phpcsFile->eolChar) {
 			$stackPtr--;
 		}
 
-		if ($tokens[$stackPtr]['code'] === T_COLON && $tokens[$stackPtr - 1]['code'] === T_WHITESPACE) {
-			$error = 'Found space(s) between colon and case value.';
-			$fix = $phpcsFile->addFixableError($error, $stackPtr - 1, 'SpaceBeforeColon');
+		$first = $phpcsFile->findFirstOnLine(array(T_CASE), $stackPtr);
+		if ($tokens[$first]['content'] === 'case') {
+			if ($tokens[$first + 3]['code'] === T_WHITESPACE) {
+				if ($tokens[$first + 4]['code'] === T_SEMICOLON) {
+					$error = 'Semicolon in switch case is not allowed. Use colon instead.';
+					$fixSemicolon = $phpcsFile->addFixableError($error, $stackPtr - 1, 'SemicolonInsteadColon');
 
-			if ($fix === true) {
-				$prev = $phpcsFile->findPrevious(T_WHITESPACE, $stackPtr);
-				for ($i = $stackPtr - 1; $i >= $prev; $i--) {
-					$phpcsFile->fixer->replaceToken($i, trim($tokens[$i]['content'], " \t\0\x0B"));
+					if ($fixSemicolon === TRUE) {
+						$phpcsFile->fixer->replaceToken($stackPtr, ':');
+					}
+				}
+				$error = 'Found space(s) between colon and case value.';
+				$fix = $phpcsFile->addFixableError($error, $stackPtr - 1, 'SpaceBeforeColon');
+
+				if ($fix === true) {
+					$index = $first + 3;
+					do {
+						$phpcsFile->fixer->replaceToken($index, '');
+						$index++;
+					} while ($tokens[$index]['code'] === T_WHITESPACE);
 				}
 			}
 		}
