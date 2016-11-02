@@ -148,17 +148,6 @@ class FileCommentSniff implements PHP_CodeSniffer_Sniff
 				continue;
 			}
 
-			if ($name === '@author') {
-				if ($tokens[$string]['content'] !== 'Squiz Pty Ltd <products@squiz.net>') {
-					$error = 'Expected "Squiz Pty Ltd <products@squiz.net>" for author tag';
-					$phpcsFile->addError($error, $tag, 'IncorrectAuthor');
-				}
-			} else if ($name === '@copyright') {
-				if (preg_match('/^([0-9]{4})(-[0-9]{4})? (Squiz Pty Ltd \(ABN 77 084 670 600\))$/', $tokens[$string]['content']) === 0) {
-					$error = 'Expected "xxxx-xxxx Squiz Pty Ltd (ABN 77 084 670 600)" for copyright declaration';
-					$phpcsFile->addError($error, $tag, 'IncorrectCopyright');
-				}
-			}//end if
 		}//end foreach
 		// Check if the tags are in the correct position.
 		$pos = 0;

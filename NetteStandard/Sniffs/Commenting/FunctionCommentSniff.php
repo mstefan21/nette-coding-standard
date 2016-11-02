@@ -188,36 +188,7 @@ class FunctionCommentSniff extends PEAR_Sniffs_Commenting_FunctionCommentSniff
 			if ($exception === null) {
 				$error = 'Exception type and comment missing for @throws tag in function comment';
 				$phpcsFile->addError($error, $tag, 'InvalidThrows');
-			} else if ($comment === null) {
-				$error = 'Comment missing for @throws tag in function comment';
-				$phpcsFile->addError($error, $tag, 'EmptyThrows');
-			} else {
-				// Any strings until the next tag belong to this comment.
-				if (isset($tokens[$commentStart]['comment_tags'][($pos + 1)]) === true) {
-					$end = $tokens[$commentStart]['comment_tags'][($pos + 1)];
-				} else {
-					$end = $tokens[$commentStart]['comment_closer'];
-				}
-
-				for ($i = ($tag + 3); $i < $end; $i++) {
-					if ($tokens[$i]['code'] === T_DOC_COMMENT_STRING) {
-						$comment .= ' ' . $tokens[$i]['content'];
-					}
-				}
-
-				// Starts with a capital letter and ends with a fullstop.
-				$firstChar = $comment{0};
-				if (strtoupper($firstChar) !== $firstChar) {
-					$error = '@throws tag comment must start with a capital letter';
-					$phpcsFile->addError($error, ($tag + 2), 'ThrowsNotCapital');
-				}
-
-				$lastChar = substr($comment, -1);
-				if ($lastChar !== '.') {
-					$error = '@throws tag comment must end with a full stop';
-					$phpcsFile->addError($error, ($tag + 2), 'ThrowsNoFullStop');
-				}
-			}//end if
+			}
 		}//end foreach
 	}
 //end processThrows()
@@ -431,17 +402,6 @@ class FunctionCommentSniff extends PEAR_Sniffs_Commenting_FunctionCommentSniff
 
 			$foundParams[] = $param['var'];
 
-			// Check number of spaces after the type.
-			$spaces = ($maxType - strlen($param['type']) + 1);
-			if ($param['type_space'] !== $spaces) {
-				$error = 'Expected %s spaces after parameter type; %s found';
-				$data = array(
-					$spaces,
-					$param['type_space'],
-				);
-
-				$phpcsFile->addError($error, $param['tag'], 'SpacingAfterParamType', $data);
-			}//end if
 			// Make sure the param name is correct.
 			if (isset($realParams[$pos]) === true) {
 				$realName = $realParams[$pos]['name'];
@@ -472,27 +432,10 @@ class FunctionCommentSniff extends PEAR_Sniffs_Commenting_FunctionCommentSniff
 				continue;
 			}
 
-			// Check number of spaces after the var name.
-			$spaces = ($maxVar - strlen($param['var']) + 1);
-			if ($param['var_space'] !== $spaces) {
-				$error = 'Expected %s spaces after parameter name; %s found';
-				$data = array(
-					$spaces,
-					$param['var_space'],
-				);
-
-				$phpcsFile->addError($error, $param['tag'], 'SpacingAfterParamName', $data);
-			}//end if
 			// Param comments must start with a capital letter and end with the full stop.
 			if (preg_match('/^(\[OPTIONAL\])/u', $param['comment']) === 0 && preg_match('/^(\p{Ll}|\P{L})/u', $param['comment']) === 1) {
 				$error = 'Parameter comment must start with a capital letter';
 				$phpcsFile->addError($error, $param['tag'], 'ParamCommentNotCapital');
-			}
-
-			$lastChar = substr($param['comment'], -1);
-			if ($lastChar !== '.') {
-				$error = 'Parameter comment must end with a full stop';
-				$phpcsFile->addError($error, $param['tag'], 'ParamCommentFullStop');
 			}
 		}//end foreach
 
