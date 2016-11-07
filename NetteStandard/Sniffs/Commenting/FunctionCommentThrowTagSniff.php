@@ -69,9 +69,28 @@ class FunctionCommentThrowTagSniff extends PHP_CodeSniffer_Standards_AbstractSco
 		}
 
 		$currScopeEnd = $tokens[$currScope]['scope_closer'];
+		$throwTokens = array();
+
+		// Find all assertion exception
+		$tempCount = 0;
+		$tempLine = '';
+		$tokens = $phpcsFile->getTokens();
+		for ($i = $currScope; $i < $currScopeEnd; $i++) {
+			$content = $tokens[$i]['content'];
+			if ($content === 'Validators' || $content === '::' || $content === 'assert') {
+				$tempLine .= $content;
+				$tempCount++;
+			}
+			if ($tempCount === 3) {
+				if ($tempLine == 'Validators::assert') {
+					$throwTokens[] = 'AssertionException';
+				}
+				$tempLine = '';
+				$tempCount = 0;
+			}
+		}
 
 		// Find all the exception type token within the current scope.
-		$throwTokens = array();
 		$currPos = $stackPtr;
 		$foundThrows = false;
 		while ($currPos < $currScopeEnd && $currPos !== false) {
