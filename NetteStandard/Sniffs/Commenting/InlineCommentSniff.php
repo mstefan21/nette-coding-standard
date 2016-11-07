@@ -220,6 +220,11 @@ class InlineCommentSniff implements PHP_CodeSniffer_Sniff
 			}
 		}
 
+		// Ignore NetBeans editor-fold comments
+		if (strpos($commentText, 'editor-fold') !== FALSE) {
+			return;
+		}
+
 		if ($commentText === '') {
 			$error = 'Blank comments are not allowed';
 			$fix = $phpcsFile->addError($error, $stackPtr, 'Empty');
@@ -230,29 +235,6 @@ class InlineCommentSniff implements PHP_CodeSniffer_Sniff
 		if (preg_match('/^\p{Ll}/u', $commentText) === 1) {
 			$error = 'Inline comments must start with a capital letter';
 			$phpcsFile->addError($error, $topComment, 'NotCapital');
-		}
-
-		// Only check the end of comment character if the start of the comment
-		// is a letter, indicating that the comment is just standard text.
-		if (preg_match('/^\p{L}/u', $commentText) === 1) {
-			$commentCloser = $commentText[(strlen($commentText) - 1)];
-			$acceptedClosers = array(
-				'full-stops' => '.',
-				'exclamation marks' => '!',
-				'or question marks' => '?',
-			);
-
-			if (in_array($commentCloser, $acceptedClosers) === false) {
-				$error = 'Inline comments must end in %s';
-				$ender = '';
-				foreach ($acceptedClosers as $closerName => $symbol) {
-					$ender .= ' ' . $closerName . ',';
-				}
-
-				$ender = trim($ender, ' ,');
-				$data = array($ender);
-				$phpcsFile->addError($error, $stackPtr, 'InvalidEndChar', $data);
-			}
 		}
 
 		// Finally, the line below the last comment cannot be empty if this inline
