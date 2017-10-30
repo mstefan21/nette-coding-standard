@@ -26,6 +26,7 @@
 		<properties>
 			<property name="numBlankLinesBeforeClosingBrace">1</property>
 		</properties>
+		<exclude name="NetteStandard.Classes.MustInheritNetteObjectSniff"/>
 	</rule>
 
 	<rule ref="Generic.Classes.DuplicateClassName"/>
